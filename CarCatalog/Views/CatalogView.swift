@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct CatalogView: View {
-    var cars: [ToyotaCar]
     @State var priceFilter = PriceFilter.off
     @State var selectedCategory: ToyotaCar.Category? = nil
+    @State var carStore = CarStore()
 
     var body: some View {
         VStack(spacing: 0) {
             Header(priceFilter: $priceFilter, selectedCategory: $selectedCategory)
             if priceFilter == .off {
-                CarsByCategory(selectedCategory: $selectedCategory, cars: cars)
+                CarsByCategory(carStore: carStore, selectedCategory: $selectedCategory)
             } else {
                 AllCarList(
-                    cars: cars,
+                    carStore: carStore,
                     priceFilter: $priceFilter,
                     selectedCategory: $selectedCategory
                 )
@@ -57,12 +57,12 @@ struct CarInfo: View {
 }
 
 struct AllCarList: View {
-    let cars: [ToyotaCar]
+    let carStore: CarStore
     @Binding var priceFilter: PriceFilter
     @Binding var selectedCategory: ToyotaCar.Category?
 
     private var filteredAndSortedCars: [ToyotaCar] {
-        var carList: [ToyotaCar] = cars
+        var carList: [ToyotaCar] = carStore.cars
         if let selectedCategory {
             carList = carList.filter { $0.category == selectedCategory }
         }
@@ -82,33 +82,38 @@ struct AllCarList: View {
             Text("Cars sorted by price in \(priceFilter.rawValue) order")
             ForEach(filteredAndSortedCars) { car in
                 CarInfo(car: car)
+            }.onDelete { indexSet in
+                let carsToDelete = indexSet.map { filteredAndSortedCars[$0] }
+                for car in carsToDelete {
+                    carStore.deleteCar(withId: car.id)
+                }
             }
         }
     }
 }
 
 struct CarsByCategory: View {
+    let carStore: CarStore
     @Binding var selectedCategory: ToyotaCar.Category?
-    var cars: [ToyotaCar]
     var body: some View {
         List {
-            if !(cars.filter { $0.category == .sedan}).isEmpty && (selectedCategory == .sedan || selectedCategory == nil) {
+            if !(carStore.cars.filter { $0.category == .sedan}).isEmpty && (selectedCategory == .sedan || selectedCategory == nil) {
                 Section(header: Text("Sedan")) {
-                    ForEach(cars.filter { $0.category == .sedan}) { car in
+                    ForEach(carStore.cars.filter { $0.category == .sedan}) { car in
                         CarInfo(car: car)
                     }
                 }
             }
-            if !(cars.filter { $0.category == .sport}).isEmpty && (selectedCategory == .sport || selectedCategory == nil) {
+            if !(carStore.cars.filter { $0.category == .sport}).isEmpty && (selectedCategory == .sport || selectedCategory == nil) {
                 Section(header: Text("Sport")) {
-                    ForEach(cars.filter { $0.category == .sport}) { car in
+                    ForEach(carStore.cars.filter { $0.category == .sport}) { car in
                         CarInfo(car: car)
                     }
                 }
             }
-            if !(cars.filter { $0.category == .suv}).isEmpty && (selectedCategory == .suv || selectedCategory == nil) {
+            if !(carStore.cars.filter { $0.category == .suv}).isEmpty && (selectedCategory == .suv || selectedCategory == nil) {
                 Section(header: Text("SUV")) {
-                    ForEach(cars.filter { $0.category == .suv}) { car in
+                    ForEach(carStore.cars.filter { $0.category == .suv}) { car in
                         CarInfo(car: car)
                     }
                 }

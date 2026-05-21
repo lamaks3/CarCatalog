@@ -11,6 +11,6 @@ import Foundation
 struct ContentView: View {
     let store = CarStore()
     var body: some View {
-        CatalogView(cars: store.cars)
+        CatalogView()
     }
 }
