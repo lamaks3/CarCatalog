@@ -2,13 +2,13 @@
 //  CarCatalogApp.swift
 //  CarCatalog
 //
-//  Created by Maksim Shyshko on 11.05.2026.
+//  Created by Maksim Shyshko on 20.05.2026.
 //
 
 import SwiftUI
 
 @main
-struct CarCatalogApp: App {
+struct CarCatalog: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

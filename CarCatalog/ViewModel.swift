@@ -1,0 +1,54 @@
+//
+//  ViewModel.swift
+//  CarCatalog
+//
+//  Created by Maksim Shyshko on 20.05.2026.
+//
+
+import Foundation
+import Combine
+
+class CarStore: ObservableObject {
+    @Published var cars: [ToyotaCar] = [
+        ToyotaCar(
+            model: "GR Yaris",
+            year: 2025,
+            price: 15000,
+            category: ToyotaCar.Category.sport,
+            isAvailable: true
+        ),
+        ToyotaCar(
+            model: "Yaris",
+            year: 2025,
+            price: 10000,
+            category: ToyotaCar.Category.sport,
+            isAvailable: true
+        ),
+        ToyotaCar(
+            model: "Celica",
+            year: 2005,
+            price: 12000,
+            category: ToyotaCar.Category.suv,
+            isAvailable: false
+        )
+    ]
+    @Published var favorites: [ToyotaCar] = []
+
+    func toggleFavorite(_ car: ToyotaCar) {
+        if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
+            favorites.remove(at: index)
+        } else {
+            favorites.append(car)
+        }
+    }
+    func delete(at offsets: IndexSet, in category: ToyotaCar.Category) {
+        let filteredCars = cars.filter { $0.category == category }
+        let carsToDelete = offsets.map { filteredCars[$0] }
+
+        for car in carsToDelete {
+            if let index = cars.firstIndex(where: { $0.id == car.id }) {
+                cars.remove(at: index)
+            }
+        }
+    }
+}
