@@ -18,7 +18,11 @@ struct CatalogView: View {
             if priceFilter == .off {
                 CarsByCategory(selectedCategory: $selectedCategory, cars: cars)
             } else {
-                AllCarList(cars: cars, priceFilter: $priceFilter)
+                AllCarList(
+                    cars: cars,
+                    priceFilter: $priceFilter,
+                    selectedCategory: $selectedCategory
+                )
             }
 
         }
@@ -53,21 +57,31 @@ struct CarInfo: View {
 }
 
 struct AllCarList: View {
-    var cars: [ToyotaCar]
+    let cars: [ToyotaCar]
     @Binding var priceFilter: PriceFilter
+    @Binding var selectedCategory: ToyotaCar.Category?
+
+    private var filteredAndSortedCars: [ToyotaCar] {
+        var carList: [ToyotaCar] = cars
+        if let selectedCategory {
+            carList = carList.filter { $0.category == selectedCategory }
+        }
+
+        if priceFilter == .ascending {
+            carList.sort { $0.price < $1.price }
+        } else if priceFilter == .descending {
+            carList.sort { $0.price > $1.price }
+        }
+
+        return carList
+    }
+
     var body: some View {
 
         List {
             Text("Cars sorted by price in \(priceFilter.rawValue) order")
-
-            if priceFilter == .ascending {
-                ForEach(cars.sorted { $0.price < $1.price }) { car in
-                    CarInfo(car: car)
-                }
-            } else {
-                ForEach(cars.sorted { $0.price > $1.price }) { car in
-                    CarInfo(car: car)
-                }
+            ForEach(filteredAndSortedCars) { car in
+                CarInfo(car: car)
             }
         }
     }
@@ -181,4 +195,5 @@ struct FilterByCategoryButton: View {
 }
 
 #Preview {
+    ContentView()
 }
