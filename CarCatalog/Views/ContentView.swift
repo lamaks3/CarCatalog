@@ -14,11 +14,11 @@ struct ContentView: View {
         TabView {
             CatalogView(carStore: carStore)
                 .tabItem {
-                    Label("Catalog", systemImage: "book.closed")
+                    Label("Catalog", systemImage: "car")
                 }
             FavoriteView(carStore: carStore)
                 .tabItem {
-                    Label("Settings", systemImage: "star")
+                    Label("Favorites", systemImage: "star")
                 }
         }
     }
