@@ -7,12 +7,51 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
+struct FavoriteView: View {
+    @ObservedObject var carStore: CarStore
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        let favorites = carStore.favorites
+        VStack(spacing: 0) {
+            FavoritesHeader()
+            List {
+                if favorites.isEmpty {
+                    Text("No favorite cars added")
+                } else {
+                    ForEach(favorites) { car in
+                        CarInfo(car: car)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct FavoritesHeader: View {
+    var body: some View {
+        HStack {
+            Text("Favorite Cars")
+                .font(Font.largeTitle.bold())
+
+            Spacer()
+        }
+        .padding()
+        .background(
+            ZStack {
+                Color.yellow.opacity(0.1)
+                HStack {
+                    Spacer()
+                    Image(systemName: "star.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .opacity(0.1)
+                }
+            }
+
+            .ignoresSafeArea(edges: .top)
+        )
     }
 }
 
 #Preview {
-    SwiftUIView()
+    FavoriteView(carStore: CarStore())
 }

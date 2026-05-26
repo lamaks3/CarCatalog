@@ -19,11 +19,11 @@ struct ToyotaCar: Identifiable {
         case sedan = "Sedan"
         case suv = "SUV"
         case sport = "Sport"
+        case all = "All"
     }
 }
 
 enum PriceFilter: String, CaseIterable {
-    case off =  "off"
-    case ascending = "ascending"
-    case descending = "descending"
+    case ascending = "Ascending"
+    case descending = "Descending"
 }

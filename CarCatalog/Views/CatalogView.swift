@@ -8,23 +8,15 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @State var priceFilter = PriceFilter.off
-    @State var selectedCategory: ToyotaCar.Category? = nil
-    @State var carStore = CarStore()
+    @ObservedObject var carStore = CarStore()
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(priceFilter: $priceFilter, selectedCategory: $selectedCategory)
-            if priceFilter == .off {
-                CarsByCategory(carStore: carStore, selectedCategory: $selectedCategory)
-            } else {
-                AllCarList(
-                    carStore: carStore,
-                    priceFilter: $priceFilter,
-                    selectedCategory: $selectedCategory
-                )
-            }
+        NavigationStack {
+            VStack(spacing: 0) {
+                Header(carStore: carStore)
+                CarList(carStore: carStore)
 
+            }
         }
     }
 }
@@ -37,84 +29,70 @@ struct CarInfo: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Toyota \(car.model)")
+                        .font(.headline)
                     Text(car.category.rawValue)
                 }
                 Spacer()
-                Text(car.isAvailable ? "В наличии" : "Под заказ")
+                Text(car.isAvailable ? "In stock" : "Out of stock")
+                    .foregroundStyle(car.isAvailable ? .green : .red)
+                    .padding(7)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(car.isAvailable ? .green.opacity(0.1) : .red.opacity(0.1))
+                    )
             }
             HStack {
-                Text("\(car.year)")
+                Text("\(car.year, format: .number.grouping(.never)) y.")
                 Spacer()
                 Text("$\(car.price)")
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .foregroundStyle(Color.secondary.opacity(0.1))
-        )
-    }
-}
-
-struct AllCarList: View {
-    let carStore: CarStore
-    @Binding var priceFilter: PriceFilter
-    @Binding var selectedCategory: ToyotaCar.Category?
-
-    private var filteredAndSortedCars: [ToyotaCar] {
-        var carList: [ToyotaCar] = carStore.cars
-        if let selectedCategory {
-            carList = carList.filter { $0.category == selectedCategory }
-        }
-
-        if priceFilter == .ascending {
-            carList.sort { $0.price < $1.price }
-        } else if priceFilter == .descending {
-            carList.sort { $0.price > $1.price }
-        }
-
-        return carList
-    }
-
-    var body: some View {
-
-        List {
-            Text("Cars sorted by price in \(priceFilter.rawValue) order")
-            ForEach(filteredAndSortedCars) { car in
-                CarInfo(car: car)
-            }.onDelete { indexSet in
-                let carsToDelete = indexSet.map { filteredAndSortedCars[$0] }
-                for car in carsToDelete {
-                    carStore.deleteCar(withId: car.id)
-                }
+                    .bold()
             }
         }
     }
 }
 
-struct CarsByCategory: View {
-    let carStore: CarStore
-    @Binding var selectedCategory: ToyotaCar.Category?
+struct CarList: View {
+    @ObservedObject var carStore: CarStore
+
     var body: some View {
         List {
-            if !(carStore.cars.filter { $0.category == .sedan}).isEmpty && (selectedCategory == .sedan || selectedCategory == nil) {
-                Section(header: Text("Sedan")) {
-                    ForEach(carStore.cars.filter { $0.category == .sedan}) { car in
-                        CarInfo(car: car)
+            Section {
+                HStack {
+                    if let filter = carStore.priceFilter {
+                        Text("\(filter.rawValue) price order.")
+                    }
+
+                    if let category = carStore.selectedCategory {
+                        Text("\(category.rawValue)s only")
+                    } else {
+                        Text("All cars")
                     }
                 }
             }
-            if !(carStore.cars.filter { $0.category == .sport}).isEmpty && (selectedCategory == .sport || selectedCategory == nil) {
-                Section(header: Text("Sport")) {
-                    ForEach(carStore.cars.filter { $0.category == .sport}) { car in
-                        CarInfo(car: car)
-                    }
+
+            let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
+
+            if categories.isEmpty {
+                Section {
+                    Text("No cars found")
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
-            }
-            if !(carStore.cars.filter { $0.category == .suv}).isEmpty && (selectedCategory == .suv || selectedCategory == nil) {
-                Section(header: Text("SUV")) {
-                    ForEach(carStore.cars.filter { $0.category == .suv}) { car in
-                        CarInfo(car: car)
+            } else {
+                ForEach(categories, id: \.self) { category in
+                    Section(header: Text(category.rawValue.capitalized)) {
+                        let carsInCategory = carStore.sortedCars[category] ?? []
+
+                        ForEach(carsInCategory) { car in
+                            NavigationLink {
+                                   CarDetailView(carStore: carStore, car: car)
+                               } label: {
+                                   CarInfo(car: car)
+                               }
+                        }
+                        .onDelete { indexSet in
+                            carStore.delete(at: indexSet, in: category)
+                        }
                     }
                 }
             }
@@ -123,8 +101,7 @@ struct CarsByCategory: View {
 }
 
 struct Header: View {
-    @Binding var priceFilter: PriceFilter
-    @Binding var selectedCategory: ToyotaCar.Category?
+    let carStore: CarStore
     var body: some View {
         HStack {
             Text("AutoHouse")
@@ -132,8 +109,8 @@ struct Header: View {
 
             Spacer()
 
-            FilterByPriceButton(priceFilter: $priceFilter)
-            FilterByCategoryButton(selectedCategory: $selectedCategory)
+            FilterByPriceButton(carStore: carStore)
+            FilterByCategoryButton(carStore: carStore)
         }
         .padding()
         .background(
@@ -144,19 +121,20 @@ struct Header: View {
 }
 
 struct FilterByPriceButton: View {
-    @Binding var priceFilter: PriceFilter
+    let carStore: CarStore
     var body: some View {
         Menu {
             Button("Ascending Price") {
-                priceFilter = .ascending
+                carStore.priceFilter = .ascending
             }
 
             Button("Descending Price") {
-                priceFilter = .descending
+                carStore.priceFilter = .descending
+
             }
 
             Button("Withought filter") {
-                priceFilter = .off
+                carStore.priceFilter = nil
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
@@ -171,21 +149,21 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    @Binding var selectedCategory: ToyotaCar.Category?
+    let carStore: CarStore
 
     var body: some View {
         Menu {
             Button("Sedan's only") {
-                selectedCategory = .sedan
+                carStore.selectedCategory = .sedan
             }
             Button("Sport's only") {
-                selectedCategory = .sport
+                carStore.selectedCategory = .sport
             }
             Button("SUV's only") {
-                selectedCategory = .suv
+                carStore.selectedCategory = .suv
             }
             Button("All categories") {
-                selectedCategory = nil
+                carStore.selectedCategory = nil
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")
