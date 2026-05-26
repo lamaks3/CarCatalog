@@ -70,15 +70,24 @@ struct CarList: View {
 
             let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
 
-            ForEach(categories, id: \.self) { category in
-                Section(header: Text(category.rawValue)) {
-                    let carsInCategory = carStore.sortedCars[category] ?? []
+            if categories.isEmpty {
+                Section {
+                    Text("No cars found")
+                        .foregroundColor(.secondary)
+                        .italic()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            } else {
+                ForEach(categories, id: \.self) { category in
+                    Section(header: Text(category.rawValue.capitalized)) {
+                        let carsInCategory = carStore.sortedCars[category] ?? []
 
-                    ForEach(carsInCategory) { car in
-                        CarInfo(car: car)
-                    }
-                    .onDelete { indexSet in
-                        carStore.delete(at: indexSet, in: category)
+                        ForEach(carsInCategory) { car in
+                            CarInfo(car: car)
+                        }
+                        .onDelete { indexSet in
+                            carStore.delete(at: indexSet, in: category)
+                        }
                     }
                 }
             }
