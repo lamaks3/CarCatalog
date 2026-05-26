@@ -33,9 +33,26 @@ class CarStore: ObservableObject {
         )
     ]
     @Published var favorites: [ToyotaCar] = []
-    @Published var sortedCars: [ToyotaCar] = []
     @Published var priceFilter: PriceFilter = .off
     @Published var selectedCategory: ToyotaCar.Category? = nil
+
+    var sortedCars: [ToyotaCar] {
+        var result = cars
+
+        if let category = selectedCategory {
+            result = result.filter { $0.category == category }
+        }
+        switch priceFilter {
+        case .ascending:
+            result.sort { $0.price < $1.price }
+        case .descending:
+            result.sort { $0.price > $1.price }
+        default:
+            break
+        }
+        return result
+    }
+
 
     func toggleFavorite(_ car: ToyotaCar) {
         if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
@@ -58,23 +75,5 @@ class CarStore: ObservableObject {
                 cars.remove(at: index)
             }
         }
-    }
-
-    public func getCars() {
-        let category = self.selectedCategory
-        let filter = self.priceFilter
-        var cars = self.cars
-
-        if category != nil {
-            cars = cars.filter { $0.category == category }
-        }
-
-        if filter == .ascending {
-            cars = cars.sorted { $0.price < $1.price }
-        } else if filter == .descending {
-            cars = cars.sorted { $0.price > $1.price }
-        }
-
-        self.sortedCars = cars
     }
 }
