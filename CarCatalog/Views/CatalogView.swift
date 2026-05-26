@@ -50,26 +50,33 @@ struct CarList: View {
     @ObservedObject var carStore: CarStore
 
     var body: some View {
-
         List {
-            HStack {
-                if let filter = carStore.priceFilter {
-                    Text("\(filter.rawValue) price order.")
-                }
+            Section {
+                HStack {
+                    if let filter = carStore.priceFilter {
+                        Text("\(filter.rawValue) price order.")
+                    }
 
-                if let category = carStore.selectedCategory {
-                    Text("\(category.rawValue)'s only")
-                } else {
-                    Text("All cars")
+                    if let category = carStore.selectedCategory {
+                        Text("\(category.rawValue)s only")
+                    } else {
+                        Text("All cars")
+                    }
                 }
             }
 
-            ForEach(carStore.sortedCars) { car in
-                CarInfo(car: car)
-            }.onDelete { indexSet in
-                let carsToDelete = indexSet.map { carStore.sortedCars[$0] }
-                for car in carsToDelete {
-                    carStore.deleteCar(withId: car.id)
+            let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
+
+            ForEach(categories, id: \.self) { category in
+                Section(header: Text(category.rawValue)) {
+                    let carsInCategory = carStore.sortedCars[category] ?? []
+
+                    ForEach(carsInCategory) { car in
+                        CarInfo(car: car)
+                    }
+                    .onDelete { indexSet in
+                        carStore.delete(at: indexSet, in: category)
+                    }
                 }
             }
         }
