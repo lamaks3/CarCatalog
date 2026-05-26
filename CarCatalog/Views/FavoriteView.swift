@@ -7,12 +7,22 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
+struct FavoriteView: View {
+    @ObservedObject var carStore: CarStore
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        var favorites = carStore.favorites
+        List {
+            if favorites.isEmpty {
+                Text("No favorite cars added")
+            } else {
+                ForEach(favorites) { car in
+                    Text(car.model)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    SwiftUIView()
+    FavoriteView(carStore: CarStore())
 }

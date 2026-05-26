@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @State var carStore = CarStore()
+    @ObservedObject var carStore = CarStore()
 
     var body: some View {
         NavigationStack {
