@@ -36,7 +36,7 @@ class CarStore: ObservableObject {
     @Published var priceFilter: PriceFilter? = nil
     @Published var selectedCategory: ToyotaCar.Category? = nil
 
-    var sortedCars: [ToyotaCar] {
+    var sortedCars: [ToyotaCar.Category : [ToyotaCar]] {
         var result = cars
 
         if let category = selectedCategory {
@@ -50,7 +50,7 @@ class CarStore: ObservableObject {
         default:
             break
         }
-        return result
+        return Dictionary(grouping: result, by: { $0.category })
     }
 
 
