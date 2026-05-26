@@ -33,7 +33,7 @@ class CarStore: ObservableObject {
         )
     ]
     @Published var favorites: [ToyotaCar] = []
-    @Published var priceFilter: PriceFilter = .off
+    @Published var priceFilter: PriceFilter? = nil
     @Published var selectedCategory: ToyotaCar.Category? = nil
 
     var sortedCars: [ToyotaCar] {

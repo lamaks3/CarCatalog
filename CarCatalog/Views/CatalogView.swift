@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @State var priceFilter = PriceFilter.off
-    @State var selectedCategory: ToyotaCar.Category? = nil
     @State var carStore = CarStore()
 
     var body: some View {
@@ -54,7 +52,18 @@ struct CarList: View {
     var body: some View {
 
         List {
-            Text("Cars sorted by price in order")
+            HStack {
+                if let filter = carStore.priceFilter {
+                    Text("\(filter.rawValue) price order.")
+                }
+
+                if let category = carStore.selectedCategory {
+                    Text("\(category.rawValue)'s only")
+                } else {
+                    Text("All cars")
+                }
+            }
+
             ForEach(carStore.sortedCars) { car in
                 CarInfo(car: car)
             }.onDelete { indexSet in
@@ -101,7 +110,7 @@ struct FilterByPriceButton: View {
             }
 
             Button("Withought filter") {
-                carStore.priceFilter = .off
+                carStore.priceFilter = nil
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
