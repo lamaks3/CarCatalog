@@ -27,22 +27,25 @@ struct CarInfo: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Toyota \(car.model)")
+                        .font(.headline)
                     Text(car.category.rawValue)
                 }
                 Spacer()
-                Text(car.isAvailable ? "В наличии" : "Под заказ")
+                Text(car.isAvailable ? "In stock" : "Out of stock")
+                    .foregroundStyle(car.isAvailable ? .green : .red)
+                    .padding(7)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(car.isAvailable ? .green.opacity(0.1) : .red.opacity(0.1))
+                    )
             }
             HStack {
-                Text("\(car.year)")
+                Text("\(car.year, format: .number.grouping(.never)) y.")
                 Spacer()
                 Text("$\(car.price)")
+                    .bold()
             }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .foregroundStyle(Color.secondary.opacity(0.1))
-        )
     }
 }
 
