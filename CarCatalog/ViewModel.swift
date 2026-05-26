@@ -34,6 +34,8 @@ class CarStore: ObservableObject {
     ]
     @Published var favorites: [ToyotaCar] = []
     @Published var sortedCars: [ToyotaCar] = []
+    @Published var priceFilter: PriceFilter = .off
+    @Published var selectedCategory: ToyotaCar.Category? = nil
 
     func toggleFavorite(_ car: ToyotaCar) {
         if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
@@ -58,7 +60,9 @@ class CarStore: ObservableObject {
         }
     }
 
-    public func getCars(category: ToyotaCar.Category?,filter: PriceFilter ) {
+    public func getCars() {
+        let category = self.selectedCategory
+        let filter = self.priceFilter
         var cars = self.cars
 
         if category != nil {
