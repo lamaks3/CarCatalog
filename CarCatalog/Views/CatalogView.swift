@@ -11,10 +11,12 @@ struct CatalogView: View {
     @State var carStore = CarStore()
 
     var body: some View {
-        VStack(spacing: 0) {
-            Header(carStore: carStore)
-            CarList(carStore: carStore)
+        NavigationStack {
+            VStack(spacing: 0) {
+                Header(carStore: carStore)
+                CarList(carStore: carStore)
 
+            }
         }
     }
 }
@@ -74,7 +76,6 @@ struct CarList: View {
                 Section {
                     Text("No cars found")
                         .foregroundColor(.secondary)
-                        .italic()
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {
@@ -83,7 +84,11 @@ struct CarList: View {
                         let carsInCategory = carStore.sortedCars[category] ?? []
 
                         ForEach(carsInCategory) { car in
-                            CarInfo(car: car)
+                            NavigationLink {
+                                   CarDetailView(carStore: carStore, car: car)
+                               } label: {
+                                   CarInfo(car: car)
+                               }
                         }
                         .onDelete { indexSet in
                             carStore.delete(at: indexSet, in: category)
