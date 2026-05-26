@@ -50,6 +50,9 @@ class CarStore: ObservableObject {
         default:
             break
         }
+        if self.selectedCategory == nil && self.priceFilter != nil {
+            return [ToyotaCar.Category.all: result]
+        }
         return Dictionary(grouping: result, by: { $0.category })
     }
 

@@ -19,6 +19,7 @@ struct ToyotaCar: Identifiable {
         case sedan = "Sedan"
         case suv = "SUV"
         case sport = "Sport"
+        case all = "All"
     }
 }
 
