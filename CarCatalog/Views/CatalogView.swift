@@ -14,16 +14,8 @@ struct CatalogView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(priceFilter: $priceFilter, selectedCategory: $selectedCategory)
-            if priceFilter == .off {
-                CarsByCategory(carStore: carStore, selectedCategory: $selectedCategory)
-            } else {
-                AllCarList(
-                    carStore: carStore,
-                    priceFilter: $priceFilter,
-                    selectedCategory: $selectedCategory
-                )
-            }
+            Header(carStore: carStore)
+            CarList(carStore: carStore)
 
         }
     }
@@ -56,34 +48,17 @@ struct CarInfo: View {
     }
 }
 
-struct AllCarList: View {
-    let carStore: CarStore
-    @Binding var priceFilter: PriceFilter
-    @Binding var selectedCategory: ToyotaCar.Category?
-
-    private var filteredAndSortedCars: [ToyotaCar] {
-        var carList: [ToyotaCar] = carStore.cars
-        if let selectedCategory {
-            carList = carList.filter { $0.category == selectedCategory }
-        }
-
-        if priceFilter == .ascending {
-            carList.sort { $0.price < $1.price }
-        } else if priceFilter == .descending {
-            carList.sort { $0.price > $1.price }
-        }
-
-        return carList
-    }
+struct CarList: View {
+    @ObservedObject var carStore: CarStore
 
     var body: some View {
 
         List {
-            Text("Cars sorted by price in \(priceFilter.rawValue) order")
-            ForEach(filteredAndSortedCars) { car in
+            Text("Cars sorted by price in order")
+            ForEach(carStore.sortedCars) { car in
                 CarInfo(car: car)
             }.onDelete { indexSet in
-                let carsToDelete = indexSet.map { filteredAndSortedCars[$0] }
+                let carsToDelete = indexSet.map { carStore.sortedCars[$0] }
                 for car in carsToDelete {
                     carStore.deleteCar(withId: car.id)
                 }
@@ -92,39 +67,8 @@ struct AllCarList: View {
     }
 }
 
-struct CarsByCategory: View {
-    let carStore: CarStore
-    @Binding var selectedCategory: ToyotaCar.Category?
-    var body: some View {
-        List {
-            if !(carStore.cars.filter { $0.category == .sedan}).isEmpty && (selectedCategory == .sedan || selectedCategory == nil) {
-                Section(header: Text("Sedan")) {
-                    ForEach(carStore.cars.filter { $0.category == .sedan}) { car in
-                        CarInfo(car: car)
-                    }
-                }
-            }
-            if !(carStore.cars.filter { $0.category == .sport}).isEmpty && (selectedCategory == .sport || selectedCategory == nil) {
-                Section(header: Text("Sport")) {
-                    ForEach(carStore.cars.filter { $0.category == .sport}) { car in
-                        CarInfo(car: car)
-                    }
-                }
-            }
-            if !(carStore.cars.filter { $0.category == .suv}).isEmpty && (selectedCategory == .suv || selectedCategory == nil) {
-                Section(header: Text("SUV")) {
-                    ForEach(carStore.cars.filter { $0.category == .suv}) { car in
-                        CarInfo(car: car)
-                    }
-                }
-            }
-        }
-    }
-}
-
 struct Header: View {
-    @Binding var priceFilter: PriceFilter
-    @Binding var selectedCategory: ToyotaCar.Category?
+    let carStore: CarStore
     var body: some View {
         HStack {
             Text("AutoHouse")
@@ -132,8 +76,8 @@ struct Header: View {
 
             Spacer()
 
-            FilterByPriceButton(priceFilter: $priceFilter)
-            FilterByCategoryButton(selectedCategory: $selectedCategory)
+            FilterByPriceButton(carStore: carStore)
+            FilterByCategoryButton(carStore: carStore)
         }
         .padding()
         .background(
@@ -144,19 +88,20 @@ struct Header: View {
 }
 
 struct FilterByPriceButton: View {
-    @Binding var priceFilter: PriceFilter
+    let carStore: CarStore
     var body: some View {
         Menu {
             Button("Ascending Price") {
-                priceFilter = .ascending
+                carStore.priceFilter = .ascending
             }
 
             Button("Descending Price") {
-                priceFilter = .descending
+                carStore.priceFilter = .descending
+
             }
 
             Button("Withought filter") {
-                priceFilter = .off
+                carStore.priceFilter = .off
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
@@ -171,21 +116,21 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    @Binding var selectedCategory: ToyotaCar.Category?
+    let carStore: CarStore
 
     var body: some View {
         Menu {
             Button("Sedan's only") {
-                selectedCategory = .sedan
+                carStore.selectedCategory = .sedan
             }
             Button("Sport's only") {
-                selectedCategory = .sport
+                carStore.selectedCategory = .sport
             }
             Button("SUV's only") {
-                selectedCategory = .suv
+                carStore.selectedCategory = .suv
             }
             Button("All categories") {
-                selectedCategory = nil
+                carStore.selectedCategory = nil
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")
