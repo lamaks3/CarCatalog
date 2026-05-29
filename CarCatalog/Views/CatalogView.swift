@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @ObservedObject var carStore = CarStore()
+    @StateObject var carStore = CarStore()
 
     var body: some View {
         NavigationStack {
@@ -101,7 +101,7 @@ struct CarList: View {
 }
 
 struct Header: View {
-    let carStore: CarStore
+    @ObservedObject var carStore: CarStore
     var body: some View {
         HStack {
             Text("AutoHouse")
