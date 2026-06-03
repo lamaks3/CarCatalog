@@ -11,14 +11,12 @@ struct CatalogView: View {
     @StateObject var carStore = CarStore()
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(spacing: 0) {
-                    Header(carStore: carStore)
-                    CarList(carStore: carStore)
-                }
-                AddCarButton(carStore: carStore)
+        ZStack {
+            VStack(spacing: 0) {
+                Header(carStore: carStore)
+                CarList(carStore: carStore)
             }
+            AddCarButton(carStore: carStore)
         }
     }
 }
