@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddCarView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var store: CarStore
     @State private var carBrand: String = ""
     @State private var model: String = ""
@@ -15,10 +16,6 @@ struct AddCarView: View {
     @State private var price: Int = 0
     @State private var category = ToyotaCar.Category.sedan
     @State private var isAvailable: Bool = true
-
-    func addCar() {
-
-    }
 
     var body: some View {
         ZStack {
@@ -39,10 +36,8 @@ struct AddCarView: View {
                     }
                     TextField("Year", value: $year, format: .number)
                         .keyboardType(.numberPad)
-                    .keyboardType(.numberPad)
                     TextField("Price", value: $price, format: .number)
                         .keyboardType(.numberPad)
-                    .keyboardType(.numberPad)
                     Picker("Category", selection: $category) {
                         Text("Sedan").tag(ToyotaCar.Category.sedan)
                         Text("SUV").tag(ToyotaCar.Category.suv)
@@ -60,6 +55,7 @@ struct AddCarView: View {
                 Button(action:
                         {let car = ToyotaCar(model: model, year: year, price: price, category: category, isAvailable: isAvailable)
                     store.add(car: car)
+                    dismiss()
                 }) {
                     ConfirmButton()
                 }}
