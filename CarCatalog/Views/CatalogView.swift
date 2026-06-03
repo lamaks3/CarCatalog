@@ -30,7 +30,7 @@ struct CarInfo: View {
                 VStack(alignment: .leading) {
                     Text("\(car.brand) \(car.model)")
                         .font(.headline)
-                    Text(car.category.rawValue)
+                    Text(car.category.title)
                 }
                 Spacer()
                 Text(car.isAvailable ? "In stock" : "Out of stock")
@@ -63,7 +63,7 @@ struct CarList: View {
                     }
 
                     if let category = carStore.selectedCategory {
-                        Text("\(category.rawValue)s only")
+                        Text("\(category.title)s only")
                     } else {
                         Text("All cars")
                     }
@@ -152,12 +152,12 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    let carStore: CarStore
+    @ObservedObject var carStore: CarStore
 
     var body: some View {
         Menu {
             ForEach(Car.Category.allCases, id: \.self) { category in
-                Button("\(category.menuTitle)'s only") {
+                Button("\(category.title)'s only") {
                     carStore.selectedCategory = category
                 }
             }

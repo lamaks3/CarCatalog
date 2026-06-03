@@ -29,8 +29,9 @@ struct Car: Identifiable {
         case sedan = "Sedan"
         case suv = "SUV"
         case sport = "Sport"
+        case hatchback = "Hatchback"
 
-        var menuTitle: String {
+        var title: String {
             return self.rawValue
         }
     }

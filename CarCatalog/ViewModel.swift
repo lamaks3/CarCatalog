@@ -56,7 +56,7 @@ class CarStore: ObservableObject {
         if self.selectedCategory == nil && self.priceFilter != nil {
             return ["All cars" : result]
         }
-        return Dictionary(grouping: result, by: { $0.category.menuTitle })
+        return Dictionary(grouping: result, by: { $0.category.title })
     }
 
 

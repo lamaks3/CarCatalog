@@ -51,7 +51,7 @@ struct AddCarView: View {
                         .keyboardType(.numberPad)
                     Picker("Category", selection: $category) {
                         ForEach(Car.Category.allCases, id: \.self) { category in
-                            Text(category.rawValue).tag(category)
+                            Text(category.title).tag(category)
                         }
                     }
                     Picker("Avaibiality", selection: $isAvailable) {

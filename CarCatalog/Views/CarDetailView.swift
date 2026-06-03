@@ -32,7 +32,7 @@ struct CarDetailView: View {
                 VStack(alignment: .leading) {
                     Text("\(car.brand) \(car.model)")
                         .font(.headline)
-                    Text(car.category.rawValue)
+                    Text(car.category.title)
                 }
                 Spacer()
                 Text(car.isAvailable ? "In stock" : "Out of stock")
