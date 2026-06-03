@@ -12,10 +12,12 @@ struct CatalogView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                Header(carStore: carStore)
-                CarList(carStore: carStore)
-
+            ZStack {
+                VStack(spacing: 0) {
+                    Header(carStore: carStore)
+                    CarList(carStore: carStore)
+                }
+                AddCarButton()
             }
         }
     }
@@ -173,6 +175,30 @@ struct FilterByCategoryButton: View {
                 .background(
                     Circle().foregroundColor(.white)
                 )
+        }
+    }
+}
+
+struct AddCarButton: View {
+    var body: some View {
+        VStack() {
+            Spacer()
+            HStack {
+                Spacer()
+                NavigationLink {
+                    Text("Add new car")
+                } label: {
+                    Image(systemName: "plus")
+                        .foregroundStyle(Color(UIColor.systemBackground))
+                        .font(.title)
+                        .bold()
+                        .padding()
+                        .background(
+                            Circle().foregroundColor(.primary)
+                        )
+                        .padding()
+                }
+            }
         }
     }
 }
