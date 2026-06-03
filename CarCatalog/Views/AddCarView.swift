@@ -10,16 +10,18 @@ import SwiftUI
 struct AddCarView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var store: CarStore
-    @State private var carBrand: String = ""
+    @State private var brand: String = ""
     @State private var model: String = ""
     @State private var year: Int?
     @State private var price: Int?
-    @State private var category: ToyotaCar.Category = .sedan
+    @State private var category: Car.Category = .sedan
     @State private var isAvailable = true
     @State private var showBadFormAlert = false
 
     var isFormValid: Bool {
-        guard !carBrand.isEmpty, !model.isEmpty, let year = year, let price = price else { return false }
+        guard !brand.isEmpty, !model.isEmpty, let year = year, let price = price else {
+            return false
+        }
         if year < 1920 || price < 0 {
             return false
         }
@@ -37,7 +39,7 @@ struct AddCarView: View {
                     Spacer()
                 }
                 Form {
-                    TextField(text: $carBrand){
+                    TextField(text: $brand){
                         Text("Car Brand")
                     }
                     TextField(text: $model){
@@ -48,9 +50,9 @@ struct AddCarView: View {
                     TextField("Price($)", value: $price, format: .number)
                         .keyboardType(.numberPad)
                     Picker("Category", selection: $category) {
-                        Text("Sedan").tag(ToyotaCar.Category.sedan)
-                        Text("SUV").tag(ToyotaCar.Category.suv)
-                        Text("Sport").tag(ToyotaCar.Category.sport)
+                        Text("Sedan").tag(Car.Category.sedan)
+                        Text("SUV").tag(Car.Category.suv)
+                        Text("Sport").tag(Car.Category.sport)
                     }
                     Picker("Avaibiality", selection: $isAvailable) {
                         Text("In Stock").tag(true)
@@ -64,7 +66,7 @@ struct AddCarView: View {
                 Button(action:
                         {
                     if isFormValid {
-                        let car = ToyotaCar(model: model, year: year!, price: price!, category: category, isAvailable: isAvailable)
+                        let car = Car(brand: brand, model: model, year: year!, price: price!, category: category, isAvailable: isAvailable)
                         store.add(car: car)
                         dismiss()
                     } else {

@@ -22,13 +22,13 @@ struct CatalogView: View {
 }
 
 struct CarInfo: View {
-    let car: ToyotaCar
+    let car: Car
 
     var body: some View {
         VStack {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Toyota \(car.model)")
+                    Text("\(car.brand) \(car.model)")
                         .font(.headline)
                     Text(car.category.rawValue)
                 }

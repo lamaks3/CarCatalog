@@ -7,15 +7,17 @@
 
 import Foundation
 
-struct ToyotaCar: Identifiable {
+struct Car: Identifiable {
     let id = UUID()
+    let brand: String
     let model: String
     let year: Int
     let price: Int
     let category: Category
     let isAvailable: Bool
 
-    init(model: String, year: Int, price: Int, category: Category, isAvailable: Bool) {
+    init(brand: String, model: String, year: Int, price: Int, category: Category, isAvailable: Bool) {
+        self.brand = brand
         self.model = model
         self.year = year
         self.price = price

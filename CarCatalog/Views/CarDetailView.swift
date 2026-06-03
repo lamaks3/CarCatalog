@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CarDetailView: View {
     @ObservedObject var carStore: CarStore
-    var car: ToyotaCar
+    var car: Car
 
     var body: some View {
         VStack {
@@ -30,7 +30,7 @@ struct CarDetailView: View {
 
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Toyota \(car.model)")
+                    Text("\(car.brand) \(car.model)")
                         .font(.headline)
                     Text(car.category.rawValue)
                 }
@@ -62,7 +62,7 @@ struct CarDetailView: View {
 
 struct FavoriteButton: View {
     @ObservedObject var carStore: CarStore
-    let car: ToyotaCar
+    let car: Car
     var isSelected: Bool {
         carStore.favorites.contains(where: { $0.id == car.id })
     }
@@ -79,11 +79,12 @@ struct FavoriteButton: View {
 }
 
 #Preview {
-    let car = ToyotaCar(
-        model: "RAV 4",
+    let car = Car(
+        brand: "Audi",
+        model: "A5",
         year: 2005,
         price: 12000,
-        category: ToyotaCar.Category.suv,
+        category: Car.Category.sedan,
         isAvailable: false
     )
     CarDetailView(carStore: CarStore(), car: car)
