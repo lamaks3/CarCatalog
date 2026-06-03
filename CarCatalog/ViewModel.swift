@@ -9,34 +9,37 @@ import Foundation
 import Combine
 
 class CarStore: ObservableObject {
-    @Published var cars: [ToyotaCar] = [
-        ToyotaCar(
+    @Published var cars: [Car] = [
+        Car(
+            brand: "Toyota",
             model: "GR Yaris",
             year: 2025,
             price: 15000,
-            category: ToyotaCar.Category.sport,
+            category: Car.Category.sport,
             isAvailable: true
         ),
-        ToyotaCar(
+        Car(
+            brand: "Toyota",
             model: "Yaris",
             year: 2025,
             price: 10000,
-            category: ToyotaCar.Category.sport,
+            category: Car.Category.sport,
             isAvailable: true
         ),
-        ToyotaCar(
+        Car(
+            brand: "Toyota",
             model: "Celica",
             year: 2005,
             price: 12000,
-            category: ToyotaCar.Category.suv,
+            category: Car.Category.suv,
             isAvailable: false
         )
     ]
-    @Published var favorites: [ToyotaCar] = []
+    @Published var favorites: [Car] = []
     @Published var priceFilter: PriceFilter? = nil
-    @Published var selectedCategory: ToyotaCar.Category? = nil
+    @Published var selectedCategory: Car.Category? = nil
 
-    var sortedCars: [ToyotaCar.Category : [ToyotaCar]] {
+    var sortedCars: [Car.Category : [Car]] {
         var result = cars
 
         if let category = selectedCategory {
@@ -51,13 +54,13 @@ class CarStore: ObservableObject {
             break
         }
         if self.selectedCategory == nil && self.priceFilter != nil {
-            return [ToyotaCar.Category.all: result]
+            return [Car.Category.all: result]
         }
         return Dictionary(grouping: result, by: { $0.category })
     }
 
 
-    func toggleFavorite(_ car: ToyotaCar) {
+    func toggleFavorite(_ car: Car) {
         if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
             favorites.remove(at: index)
         } else {
@@ -65,7 +68,7 @@ class CarStore: ObservableObject {
         }
     }
 
-    public func delete(at offsets: IndexSet, in category: ToyotaCar.Category) {
+    public func delete(at offsets: IndexSet, in category: Car.Category) {
         let filteredCars = cars.filter { $0.category == category }
         let carsToDelete = offsets.map { filteredCars[$0] }
 
@@ -77,7 +80,7 @@ class CarStore: ObservableObject {
         }
     }
 
-    public func add(car: ToyotaCar) {
+    public func add(car: Car) {
         cars.append(car)
     }
 }
