@@ -76,4 +76,8 @@ class CarStore: ObservableObject {
             }
         }
     }
+
+    public func add(car: ToyotaCar) {
+        cars.append(car)
+    }
 }
