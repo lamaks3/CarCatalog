@@ -12,10 +12,19 @@ struct AddCarView: View {
     @ObservedObject var store: CarStore
     @State private var carBrand: String = ""
     @State private var model: String = ""
-    @State private var year: Int = 0
-    @State private var price: Int = 0
-    @State private var category = ToyotaCar.Category.sedan
-    @State private var isAvailable: Bool = true
+    @State private var year: Int?
+    @State private var price: Int?
+    @State private var category: ToyotaCar.Category = .sedan
+    @State private var isAvailable = true
+    @State private var showBadFormAlert = false
+
+    var isFormValid: Bool {
+        guard !carBrand.isEmpty, !model.isEmpty, let year = year, let price = price else { return false }
+        if year < 1920 || price < 0 {
+            return false
+        }
+        return true
+    }
 
     var body: some View {
         ZStack {
@@ -36,7 +45,7 @@ struct AddCarView: View {
                     }
                     TextField("Year", value: $year, format: .number)
                         .keyboardType(.numberPad)
-                    TextField("Price", value: $price, format: .number)
+                    TextField("Price($)", value: $price, format: .number)
                         .keyboardType(.numberPad)
                     Picker("Category", selection: $category) {
                         Text("Sedan").tag(ToyotaCar.Category.sedan)
@@ -53,10 +62,16 @@ struct AddCarView: View {
             VStack {
                 Spacer()
                 Button(action:
-                        {let car = ToyotaCar(model: model, year: year, price: price, category: category, isAvailable: isAvailable)
-                    store.add(car: car)
-                    dismiss()
-                }) {
+                        {
+                    if isFormValid {
+                        let car = ToyotaCar(model: model, year: year!, price: price!, category: category, isAvailable: isAvailable)
+                        store.add(car: car)
+                        dismiss()
+                    } else {
+                        showBadFormAlert = true
+                    }
+                })
+                {
                     HStack {
                         Text("Add car")
                             .foregroundStyle(Color.white)
@@ -69,8 +84,9 @@ struct AddCarView: View {
 
                     )
                     .padding()
-                }}
-
+                }
+                .alert("Incorrect form, please check all fields", isPresented: $showBadFormAlert) { Button("OK", role: .cancel) { } }
+            }
         }
     }
 }
