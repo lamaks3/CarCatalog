@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct AddCarView: View {
+    @ObservedObject var store: CarStore
     @State private var carBrand: String = ""
     @State private var model: String = ""
     @State private var year: Int = 0
     @State private var price: Int = 0
     @State private var category = ToyotaCar.Category.sedan
     @State private var isAvailable: Bool = true
+
+    func addCar() {
+
+    }
 
     var body: some View {
         ZStack {
@@ -50,33 +55,37 @@ struct AddCarView: View {
                 }
 
             }
-            ConfirmButton()
+            VStack {
+                Spacer()
+                Button(action:
+                        {let car = ToyotaCar(model: model, year: year, price: price, category: category, isAvailable: isAvailable)
+                    store.add(car: car)
+                }) {
+                    ConfirmButton()
+                }}
+
         }
     }
 }
 
 struct ConfirmButton: View {
     var body: some View {
-        VStack {
-            Spacer()
-                Button(action: {}) {
-                HStack {
-                    Text("Add car")
-                        .foregroundStyle(Color.white)
-                        .padding()
-                }
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .foregroundStyle(Color.primary)
-
-                )
-                .padding()
+            HStack {
+                Text("Add car")
+                    .foregroundStyle(Color.white)
+                    .padding()
             }
-        }
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 25)
+                    .foregroundStyle(Color.primary)
+
+            )
+            .padding()
     }
 }
 
 #Preview {
-    AddCarView()
+    let store = CarStore()
+    AddCarView(store: store)
 }

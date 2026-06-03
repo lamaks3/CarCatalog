@@ -17,7 +17,7 @@ struct CatalogView: View {
                     Header(carStore: carStore)
                     CarList(carStore: carStore)
                 }
-                AddCarButton()
+                AddCarButton(carStore: carStore)
             }
         }
     }
@@ -180,13 +180,14 @@ struct FilterByCategoryButton: View {
 }
 
 struct AddCarButton: View {
+    @ObservedObject var carStore: CarStore
     var body: some View {
         VStack() {
             Spacer()
             HStack {
                 Spacer()
                 NavigationLink {
-                    Text("Add new car")
+                    AddCarView(store: carStore)
                 } label: {
                     Image(systemName: "plus")
                         .foregroundStyle(Color(UIColor.systemBackground))
