@@ -11,15 +11,17 @@ import Foundation
 struct ContentView: View {
     @State var carStore = CarStore()
     var body: some View {
-        TabView {
-            CatalogView(carStore: carStore)
-                .tabItem {
-                    Label("Catalog", systemImage: "car")
-                }
-            FavoriteView(carStore: carStore)
-                .tabItem {
-                    Label("Favorites", systemImage: "star")
-                }
+        NavigationStack {
+            TabView {
+                CatalogView(carStore: carStore)
+                    .tabItem {
+                        Label("Catalog", systemImage: "car")
+                    }
+                FavoriteView(carStore: carStore)
+                    .tabItem {
+                        Label("Favorites", systemImage: "star")
+                    }
+            }
         }
     }
 }

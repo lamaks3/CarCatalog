@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @ObservedObject var carStore = CarStore()
+    @StateObject var carStore = CarStore()
 
     var body: some View {
-        NavigationStack {
+        ZStack {
             VStack(spacing: 0) {
                 Header(carStore: carStore)
                 CarList(carStore: carStore)
-
             }
+            AddCarButton(carStore: carStore)
         }
     }
 }
@@ -101,7 +101,7 @@ struct CarList: View {
 }
 
 struct Header: View {
-    let carStore: CarStore
+    @ObservedObject var carStore: CarStore
     var body: some View {
         HStack {
             Text("AutoHouse")
@@ -173,6 +173,31 @@ struct FilterByCategoryButton: View {
                 .background(
                     Circle().foregroundColor(.white)
                 )
+        }
+    }
+}
+
+struct AddCarButton: View {
+    @ObservedObject var carStore: CarStore
+    var body: some View {
+        VStack() {
+            Spacer()
+            HStack {
+                Spacer()
+                NavigationLink {
+                    AddCarView(store: carStore)
+                } label: {
+                    Image(systemName: "plus")
+                        .foregroundStyle(Color(UIColor.systemBackground))
+                        .font(.title)
+                        .bold()
+                        .padding()
+                        .background(
+                            Circle().foregroundColor(.primary)
+                        )
+                        .padding()
+                }
+            }
         }
     }
 }

@@ -65,10 +65,6 @@ class CarStore: ObservableObject {
         }
     }
 
-    func deleteCar(withId id: UUID) {
-            cars.removeAll { $0.id == id }
-    }
-
     public func delete(at offsets: IndexSet, in category: ToyotaCar.Category) {
         let filteredCars = cars.filter { $0.category == category }
         let carsToDelete = offsets.map { filteredCars[$0] }
@@ -76,7 +72,12 @@ class CarStore: ObservableObject {
         for car in carsToDelete {
             if let index = cars.firstIndex(where: { $0.id == car.id }) {
                 cars.remove(at: index)
+                favorites.removeAll { $0.id == car.id }
             }
         }
+    }
+
+    public func add(car: ToyotaCar) {
+        cars.append(car)
     }
 }
