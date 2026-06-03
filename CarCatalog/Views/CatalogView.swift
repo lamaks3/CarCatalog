@@ -91,7 +91,10 @@ struct CarList: View {
                                }
                         }
                         .onDelete { indexSet in
-                            carStore.delete(at: indexSet)
+                            for index in indexSet {
+                                let carToDelete = carsInCategory[index]
+                                carStore.delete(car: carToDelete)
+                            }
                         }
                     }
                 }
