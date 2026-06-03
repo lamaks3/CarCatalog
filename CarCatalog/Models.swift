@@ -30,6 +30,15 @@ struct Car: Identifiable {
         case suv = "SUV"
         case sport = "Sport"
         case all = "All"
+
+        var menuTitle: String {
+                switch self {
+                case .all:
+                    return "All categories"
+                default:
+                    return self.rawValue
+                }
+            }
     }
 }
 

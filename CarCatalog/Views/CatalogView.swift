@@ -153,17 +153,14 @@ struct FilterByCategoryButton: View {
 
     var body: some View {
         Menu {
-            Button("Sedan's only") {
-                carStore.selectedCategory = .sedan
-            }
-            Button("Sport's only") {
-                carStore.selectedCategory = .sport
-            }
-            Button("SUV's only") {
-                carStore.selectedCategory = .suv
-            }
-            Button("All categories") {
-                carStore.selectedCategory = nil
+            ForEach(Car.Category.allCases, id: \.self) { category in
+                Button("\(category.menuTitle)'s only") {
+                    if category == .all {
+                        carStore.selectedCategory = nil
+                    } else {
+                        carStore.selectedCategory = category
+                    }
+                }
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")

@@ -50,9 +50,9 @@ struct AddCarView: View {
                     TextField("Price($)", value: $price, format: .number)
                         .keyboardType(.numberPad)
                     Picker("Category", selection: $category) {
-                        Text("Sedan").tag(Car.Category.sedan)
-                        Text("SUV").tag(Car.Category.suv)
-                        Text("Sport").tag(Car.Category.sport)
+                        ForEach(Car.Category.allCases, id: \.self) { category in
+                            Text(category.rawValue).tag(category)
+                        }
                     }
                     Picker("Avaibiality", selection: $isAvailable) {
                         Text("In Stock").tag(true)
