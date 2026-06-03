@@ -70,7 +70,7 @@ struct CarList: View {
                 }
             }
 
-            let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
+            let categories = carStore.sortedCars.keys
 
             if categories.isEmpty {
                 Section {
@@ -79,8 +79,8 @@ struct CarList: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {
-                ForEach(categories, id: \.self) { category in
-                    Section(header: Text(category.rawValue.capitalized)) {
+                ForEach(categories.sorted(), id: \.self) { category in
+                    Section(header: Text(category)) {
                         let carsInCategory = carStore.sortedCars[category] ?? []
 
                         ForEach(carsInCategory) { car in
@@ -91,7 +91,7 @@ struct CarList: View {
                                }
                         }
                         .onDelete { indexSet in
-                            carStore.delete(at: indexSet, in: category)
+                            carStore.delete(at: indexSet)
                         }
                     }
                 }
@@ -155,12 +155,11 @@ struct FilterByCategoryButton: View {
         Menu {
             ForEach(Car.Category.allCases, id: \.self) { category in
                 Button("\(category.menuTitle)'s only") {
-                    if category == .all {
-                        carStore.selectedCategory = nil
-                    } else {
-                        carStore.selectedCategory = category
-                    }
+                    carStore.selectedCategory = category
                 }
+            }
+            Button("All cars") {
+                carStore.selectedCategory = nil
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")

@@ -39,7 +39,7 @@ class CarStore: ObservableObject {
     @Published var priceFilter: PriceFilter? = nil
     @Published var selectedCategory: Car.Category? = nil
 
-    var sortedCars: [Car.Category : [Car]] {
+    var sortedCars: [String : [Car]] {
         var result = cars
 
         if let category = selectedCategory {
@@ -54,9 +54,9 @@ class CarStore: ObservableObject {
             break
         }
         if self.selectedCategory == nil && self.priceFilter != nil {
-            return [Car.Category.all: result]
+            return ["All cars" : result]
         }
-        return Dictionary(grouping: result, by: { $0.category })
+        return Dictionary(grouping: result, by: { $0.category.menuTitle })
     }
 
 
@@ -68,9 +68,8 @@ class CarStore: ObservableObject {
         }
     }
 
-    public func delete(at offsets: IndexSet, in category: Car.Category) {
-        let filteredCars = cars.filter { $0.category == category }
-        let carsToDelete = offsets.map { filteredCars[$0] }
+    public func delete(at offsets: IndexSet) {
+        let carsToDelete = offsets.map { cars[$0] }
 
         for car in carsToDelete {
             if let index = cars.firstIndex(where: { $0.id == car.id }) {
