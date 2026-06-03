@@ -57,27 +57,21 @@ struct AddCarView: View {
                     store.add(car: car)
                     dismiss()
                 }) {
-                    ConfirmButton()
+                    HStack {
+                        Text("Add car")
+                            .foregroundStyle(Color.white)
+                            .padding()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .foregroundStyle(Color.primary)
+
+                    )
+                    .padding()
                 }}
 
         }
-    }
-}
-
-struct ConfirmButton: View {
-    var body: some View {
-            HStack {
-                Text("Add car")
-                    .foregroundStyle(Color.white)
-                    .padding()
-            }
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .foregroundStyle(Color.primary)
-
-            )
-            .padding()
     }
 }
 
