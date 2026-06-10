@@ -7,23 +7,14 @@
 
 import Foundation
 
-struct Car: Identifiable {
-    let id = UUID()
+struct Car: Identifiable, Equatable, Hashable {
+    var id = UUID()
     let brand: String
     let model: String
     let year: Int
     let price: Int
     let category: Category
     let isAvailable: Bool
-
-    init(brand: String, model: String, year: Int, price: Int, category: Category, isAvailable: Bool) {
-        self.brand = brand
-        self.model = model
-        self.year = year
-        self.price = price
-        self.category = category
-        self.isAvailable = isAvailable
-    }
 
     enum Category: String, CaseIterable {
         case sedan = "Sedan"
@@ -34,6 +25,26 @@ struct Car: Identifiable {
         var title: String {
             return self.rawValue
         }
+    }
+}
+
+extension Car {
+    init?(entity: CarEntity) {
+        guard let id = entity.id,
+              let brand = entity.brand,
+              let model = entity.model,
+              let categoryString = entity.category,
+              let category = Category(rawValue: categoryString) else {
+            return nil
+        }
+
+        self.id = id
+        self.brand = brand
+        self.model = model
+        self.year = Int(entity.year)
+        self.price = Int(entity.price)
+        self.category = category
+        self.isAvailable = entity.isAvailable
     }
 }
 
