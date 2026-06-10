@@ -8,36 +8,28 @@
 import Foundation
 import Combine
 
+@MainActor
 class CarStore: ObservableObject {
-    @Published var cars: [Car] = [
-        Car(
-            brand: "Toyota",
-            model: "GR Yaris",
-            year: 2025,
-            price: 15000,
-            category: Car.Category.sport,
-            isAvailable: true
-        ),
-        Car(
-            brand: "Toyota",
-            model: "Yaris",
-            year: 2025,
-            price: 10000,
-            category: Car.Category.sport,
-            isAvailable: true
-        ),
-        Car(
-            brand: "Toyota",
-            model: "Celica",
-            year: 2005,
-            price: 12000,
-            category: Car.Category.suv,
-            isAvailable: false
-        )
-    ]
+    @Published var cars: [Car] = []
+
     @Published var favorites: [Car] = []
     @Published var priceFilter: PriceFilter? = nil
     @Published var selectedCategory: Car.Category? = nil
+
+    private let repository: CarRepositoryProtocol
+
+    init(repository: CarRepositoryProtocol) {
+            self.repository = repository
+            fetchCars()
+        }
+
+    convenience init() {
+        self.init(repository: CoreDataCarRepository())
+    }
+
+    private func fetchCars() {
+        self.cars = repository.fetchAllCars()
+    }
 
     var sortedCars: [String : [Car]] {
         var result = cars
@@ -59,7 +51,6 @@ class CarStore: ObservableObject {
         return Dictionary(grouping: result, by: { $0.category.title })
     }
 
-
     func toggleFavorite(_ car: Car) {
         if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
             favorites.remove(at: index)
@@ -69,11 +60,14 @@ class CarStore: ObservableObject {
     }
 
     public func delete(car: Car) {
-        cars.removeAll { $0.id == car.id }
+        repository.delete(car: car)
+        fetchCars()
+
         favorites.removeAll { $0.id == car.id }
     }
 
     public func add(car: Car) {
-        cars.append(car)
+        repository.save(car: car)
+        fetchCars()
     }
 }
