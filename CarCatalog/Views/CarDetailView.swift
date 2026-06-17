@@ -16,7 +16,7 @@ struct CarDetailView: View {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.blue.opacity(0.1))
+                        .fill(Color.blue.opacity(0.3))
                         .frame(maxWidth: .infinity)
                         .aspectRatio(1, contentMode: .fit)
 

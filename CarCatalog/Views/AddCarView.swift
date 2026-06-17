@@ -45,7 +45,7 @@ struct AddCarView: View {
                     TextField(text: $model){
                         Text("Model")
                     }
-                    TextField("Year", value: $year, format: .number)
+                    TextField("Year", value: $year, format: .number.grouping(.never))
                         .keyboardType(.numberPad)
                     TextField("Price($)", value: $price, format: .number)
                         .keyboardType(.numberPad)
@@ -76,7 +76,8 @@ struct AddCarView: View {
                 {
                     HStack {
                         Text("Add car")
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color.primary)
+                            .colorInvert()
                             .padding()
                     }
                     .frame(maxWidth: .infinity)
