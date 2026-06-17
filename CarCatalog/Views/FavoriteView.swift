@@ -49,7 +49,7 @@ struct FavoritesHeader: View {
         .padding()
         .background(
             ZStack {
-                Color.yellow.opacity(0.1)
+                Color.yellow.opacity(0.5)
                 HStack {
                     Spacer()
                     Image(systemName: "star.fill")

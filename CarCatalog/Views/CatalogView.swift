@@ -117,8 +117,8 @@ struct Header: View {
         }
         .padding()
         .background(
-            Color.blue.opacity(0.1)
-                           .ignoresSafeArea(edges: .top)
+            Color.blue.opacity(0.2)
+               .ignoresSafeArea(edges: .top)
         )
     }
 }
