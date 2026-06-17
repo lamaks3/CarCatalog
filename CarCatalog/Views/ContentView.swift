@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 
 struct ContentView: View {
-    @State var carStore = CarStore()
+    @State var carStore = CatalogViewModel()
     var body: some View {
         NavigationStack {
             TabView {
