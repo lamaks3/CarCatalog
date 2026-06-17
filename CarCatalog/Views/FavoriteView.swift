@@ -18,7 +18,19 @@ struct FavoriteView: View {
                     Text("No favorite cars added")
                 } else {
                     ForEach(favorites) { car in
-                        CarInfo(car: car)
+                        NavigationLink {
+                            CarDetailView(carStore: carStore, car: car)
+                        } label: {
+                            CarInfo(car: car)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    carStore.toggleFavorite(car)
+                                } label: {
+                                    Label("Remove from Favorites", systemImage: "star.slash.fill")
+                                }
+                                .tint(.yellow)
+                            }
+                        }
                     }
                 }
             }
