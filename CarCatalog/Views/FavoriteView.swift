@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct FavoriteView: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     var body: some View {
-        let favorites = carStore.favoriteCars
+        let favorites = viewModel.favoriteCars
         VStack(spacing: 0) {
             FavoritesHeader()
             List {
@@ -19,12 +19,12 @@ struct FavoriteView: View {
                 } else {
                     ForEach(favorites) { car in
                         NavigationLink {
-                            CarDetailView(carStore: carStore, car: car)
+                            CarDetailView(viewModel: viewModel, car: car)
                         } label: {
                             CarInfo(car: car)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    carStore.toggleFavorite(car)
+                                    viewModel.toggleFavorite(car)
                                 } label: {
                                     Label("Remove from Favorites", systemImage: "star.slash.fill")
                                 }
@@ -65,5 +65,5 @@ struct FavoritesHeader: View {
 }
 
 #Preview {
-    FavoriteView(carStore: CarStore())
+    FavoriteView(viewModel: CatalogViewModel())
 }

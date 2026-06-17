@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CarDetailView: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     var car: Car
 
     var body: some View {
@@ -51,7 +51,7 @@ struct CarDetailView: View {
                     .bold()
             }
             HStack {
-                FavoriteButton(carStore: carStore, car: car)
+                FavoriteButton(viewModel: viewModel, car: car)
                 Spacer()
             }
             Spacer()
@@ -61,10 +61,10 @@ struct CarDetailView: View {
 }
 
 struct FavoriteButton: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     let car: Car
     var isSelected: Bool {
-            if let actualCar = carStore.cars.first(where: { $0.id == car.id }) {
+            if let actualCar = viewModel.cars.first(where: { $0.id == car.id }) {
                 return actualCar.isFavorite
             }
             return false
@@ -72,7 +72,7 @@ struct FavoriteButton: View {
 
     var body: some View {
         Button(action: {
-            carStore.toggleFavorite(car)
+            viewModel.toggleFavorite(car)
         }) {
             Image(systemName: isSelected ? "star.fill" : "star")
                 .font(.title)
@@ -91,5 +91,5 @@ struct FavoriteButton: View {
         isAvailable: false,
         isFavorite: false
     )
-    CarDetailView(carStore: CarStore(), car: car)
+    CarDetailView(viewModel: CatalogViewModel(), car: car)
 }

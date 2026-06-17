@@ -9,15 +9,15 @@ import SwiftUI
 import Foundation
 
 struct ContentView: View {
-    @State var carStore = CatalogViewModel()
+    @State var viewModel = CatalogViewModel()
     var body: some View {
         NavigationStack {
             TabView {
-                CatalogView(carStore: carStore)
+                CatalogView(viewModel: viewModel)
                     .tabItem {
                         Label("Catalog", systemImage: "car")
                     }
-                FavoriteView(carStore: carStore)
+                FavoriteView(viewModel: viewModel)
                     .tabItem {
                         Label("Favorites", systemImage: "star")
                     }

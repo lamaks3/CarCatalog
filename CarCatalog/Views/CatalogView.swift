@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @StateObject var carStore = CarStore()
+    @StateObject var viewModel = CatalogViewModel()
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                Header(carStore: carStore)
-                CarList(carStore: carStore)
+                Header(viewModel: viewModel)
+                CarList(viewModel: viewModel)
             }
-            AddCarButton(carStore: carStore)
+            AddCarButton(viewModel: viewModel)
         }
     }
 }
@@ -52,17 +52,17 @@ struct CarInfo: View {
 }
 
 struct CarList: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
 
     var body: some View {
         List {
             Section {
                 HStack {
-                    if let filter = carStore.priceFilter {
+                    if let filter = viewModel.priceFilter {
                         Text("\(filter.rawValue) price order.")
                     }
 
-                    if let category = carStore.selectedCategory {
+                    if let category = viewModel.selectedCategory {
                         Text("\(category.title)s only")
                     } else {
                         Text("All cars")
@@ -70,7 +70,7 @@ struct CarList: View {
                 }
             }
 
-            let categories = carStore.sortedCars.keys
+            let categories = viewModel.sortedCars.keys
 
             if categories.isEmpty {
                 Section {
@@ -81,11 +81,11 @@ struct CarList: View {
             } else {
                 ForEach(categories.sorted(), id: \.self) { category in
                     Section(header: Text(category)) {
-                        let carsInCategory = carStore.sortedCars[category] ?? []
+                        let carsInCategory = viewModel.sortedCars[category] ?? []
 
                         ForEach(carsInCategory) { car in
                             NavigationLink {
-                                   CarDetailView(carStore: carStore, car: car)
+                                   CarDetailView(viewModel: viewModel, car: car)
                                } label: {
                                    CarInfo(car: car)
                                }
@@ -93,7 +93,7 @@ struct CarList: View {
                         .onDelete { indexSet in
                             for index in indexSet {
                                 let carToDelete = carsInCategory[index]
-                                carStore.delete(car: carToDelete)
+                                viewModel.delete(car: carToDelete)
                             }
                         }
                     }
@@ -104,7 +104,7 @@ struct CarList: View {
 }
 
 struct Header: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     var body: some View {
         HStack {
             Text("AutoHouse")
@@ -112,8 +112,8 @@ struct Header: View {
 
             Spacer()
 
-            FilterByPriceButton(carStore: carStore)
-            FilterByCategoryButton(carStore: carStore)
+            FilterByPriceButton(viewModel: viewModel)
+            FilterByCategoryButton(viewModel: viewModel)
         }
         .padding()
         .background(
@@ -124,20 +124,20 @@ struct Header: View {
 }
 
 struct FilterByPriceButton: View {
-    let carStore: CarStore
+    let viewModel: CatalogViewModel
     var body: some View {
         Menu {
             Button("Ascending Price") {
-                carStore.priceFilter = .ascending
+                viewModel.priceFilter = .ascending
             }
 
             Button("Descending Price") {
-                carStore.priceFilter = .descending
+                viewModel.priceFilter = .descending
 
             }
 
             Button("Withought filter") {
-                carStore.priceFilter = nil
+                viewModel.priceFilter = nil
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
@@ -152,17 +152,17 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
 
     var body: some View {
         Menu {
             ForEach(Car.Category.allCases, id: \.self) { category in
                 Button("\(category.title)'s only") {
-                    carStore.selectedCategory = category
+                    viewModel.selectedCategory = category
                 }
             }
             Button("All cars") {
-                carStore.selectedCategory = nil
+                viewModel.selectedCategory = nil
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")
@@ -177,14 +177,14 @@ struct FilterByCategoryButton: View {
 }
 
 struct AddCarButton: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     var body: some View {
         VStack() {
             Spacer()
             HStack {
                 Spacer()
                 NavigationLink {
-                    AddCarView(store: carStore)
+                    AddCarView(viewModel: viewModel)
                 } label: {
                     Image(systemName: "plus")
                         .foregroundStyle(Color(UIColor.systemBackground))

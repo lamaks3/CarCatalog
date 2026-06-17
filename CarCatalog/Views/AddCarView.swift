@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddCarView: View {
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var store: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     @State private var brand: String = ""
     @State private var model: String = ""
     @State private var year: Int?
@@ -67,7 +67,7 @@ struct AddCarView: View {
                         {
                     if isFormValid {
                         let car = Car(brand: brand, model: model, year: year!, price: price!, category: category, isAvailable: isAvailable, isFavorite: true)
-                        store.add(car: car)
+                        viewModel.add(car: car)
                         dismiss()
                     } else {
                         showBadFormAlert = true
@@ -95,6 +95,6 @@ struct AddCarView: View {
 }
 
 #Preview {
-    let store = CarStore()
-    AddCarView(store: store)
+    let viewModel = CatalogViewModel()
+    AddCarView(viewModel: viewModel)
 }

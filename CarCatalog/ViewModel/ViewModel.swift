@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @MainActor
-class CarStore: ObservableObject {
+class CatalogViewModel: ObservableObject {
     @Published var cars: [Car] = []
 
     @Published var priceFilter: PriceFilter? = nil
