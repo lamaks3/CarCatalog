@@ -8,29 +8,29 @@
 import SwiftUI
 
 struct CatalogView: View {
-    @ObservedObject var carStore = CarStore()
+    @StateObject var viewModel = CatalogViewModel()
 
     var body: some View {
-        NavigationStack {
+        ZStack {
             VStack(spacing: 0) {
-                Header(carStore: carStore)
-                CarList(carStore: carStore)
-
+                Header(viewModel: viewModel)
+                CarList(viewModel: viewModel)
             }
+            AddCarButton(viewModel: viewModel)
         }
     }
 }
 
 struct CarInfo: View {
-    let car: ToyotaCar
+    let car: Car
 
     var body: some View {
         VStack {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Toyota \(car.model)")
+                    Text("\(car.brand) \(car.model)")
                         .font(.headline)
-                    Text(car.category.rawValue)
+                    Text(car.category.title)
                 }
                 Spacer()
                 Text(car.isAvailable ? "In stock" : "Out of stock")
@@ -52,25 +52,25 @@ struct CarInfo: View {
 }
 
 struct CarList: View {
-    @ObservedObject var carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
 
     var body: some View {
         List {
             Section {
                 HStack {
-                    if let filter = carStore.priceFilter {
+                    if let filter = viewModel.priceFilter {
                         Text("\(filter.rawValue) price order.")
                     }
 
-                    if let category = carStore.selectedCategory {
-                        Text("\(category.rawValue)s only")
+                    if let category = viewModel.selectedCategory {
+                        Text("\(category.title)s only")
                     } else {
                         Text("All cars")
                     }
                 }
             }
 
-            let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
+            let categories = viewModel.sortedCars.keys
 
             if categories.isEmpty {
                 Section {
@@ -79,19 +79,22 @@ struct CarList: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {
-                ForEach(categories, id: \.self) { category in
-                    Section(header: Text(category.rawValue.capitalized)) {
-                        let carsInCategory = carStore.sortedCars[category] ?? []
+                ForEach(categories.sorted(), id: \.self) { category in
+                    Section(header: Text(category)) {
+                        let carsInCategory = viewModel.sortedCars[category] ?? []
 
                         ForEach(carsInCategory) { car in
                             NavigationLink {
-                                   CarDetailView(carStore: carStore, car: car)
+                                   CarDetailView(viewModel: viewModel, car: car)
                                } label: {
                                    CarInfo(car: car)
                                }
                         }
                         .onDelete { indexSet in
-                            carStore.delete(at: indexSet, in: category)
+                            for index in indexSet {
+                                let carToDelete = carsInCategory[index]
+                                viewModel.delete(car: carToDelete)
+                            }
                         }
                     }
                 }
@@ -101,7 +104,7 @@ struct CarList: View {
 }
 
 struct Header: View {
-    let carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
     var body: some View {
         HStack {
             Text("AutoHouse")
@@ -109,32 +112,32 @@ struct Header: View {
 
             Spacer()
 
-            FilterByPriceButton(carStore: carStore)
-            FilterByCategoryButton(carStore: carStore)
+            FilterByPriceButton(viewModel: viewModel)
+            FilterByCategoryButton(viewModel: viewModel)
         }
         .padding()
         .background(
-            Color.blue.opacity(0.1)
-                           .ignoresSafeArea(edges: .top)
+            Color.blue.opacity(0.2)
+               .ignoresSafeArea(edges: .top)
         )
     }
 }
 
 struct FilterByPriceButton: View {
-    let carStore: CarStore
+    let viewModel: CatalogViewModel
     var body: some View {
         Menu {
             Button("Ascending Price") {
-                carStore.priceFilter = .ascending
+                viewModel.priceFilter = .ascending
             }
 
             Button("Descending Price") {
-                carStore.priceFilter = .descending
+                viewModel.priceFilter = .descending
 
             }
 
             Button("Withought filter") {
-                carStore.priceFilter = nil
+                viewModel.priceFilter = nil
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
@@ -149,21 +152,17 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    let carStore: CarStore
+    @ObservedObject var viewModel: CatalogViewModel
 
     var body: some View {
         Menu {
-            Button("Sedan's only") {
-                carStore.selectedCategory = .sedan
+            ForEach(Car.Category.allCases, id: \.self) { category in
+                Button("\(category.title)'s only") {
+                    viewModel.selectedCategory = category
+                }
             }
-            Button("Sport's only") {
-                carStore.selectedCategory = .sport
-            }
-            Button("SUV's only") {
-                carStore.selectedCategory = .suv
-            }
-            Button("All categories") {
-                carStore.selectedCategory = nil
+            Button("All cars") {
+                viewModel.selectedCategory = nil
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")
@@ -173,6 +172,31 @@ struct FilterByCategoryButton: View {
                 .background(
                     Circle().foregroundColor(.white)
                 )
+        }
+    }
+}
+
+struct AddCarButton: View {
+    @ObservedObject var viewModel: CatalogViewModel
+    var body: some View {
+        VStack() {
+            Spacer()
+            HStack {
+                Spacer()
+                NavigationLink {
+                    AddCarView(viewModel: viewModel)
+                } label: {
+                    Image(systemName: "plus")
+                        .foregroundStyle(Color(UIColor.systemBackground))
+                        .font(.title)
+                        .bold()
+                        .padding()
+                        .background(
+                            Circle().foregroundColor(.primary)
+                        )
+                        .padding()
+                }
+            }
         }
     }
 }

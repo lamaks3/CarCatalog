@@ -9,17 +9,19 @@ import SwiftUI
 import Foundation
 
 struct ContentView: View {
-    @State var carStore = CarStore()
+    @State var viewModel = CatalogViewModel()
     var body: some View {
-        TabView {
-            CatalogView(carStore: carStore)
-                .tabItem {
-                    Label("Catalog", systemImage: "car")
-                }
-            FavoriteView(carStore: carStore)
-                .tabItem {
-                    Label("Favorites", systemImage: "star")
-                }
+        NavigationStack {
+            TabView {
+                CatalogView(viewModel: viewModel)
+                    .tabItem {
+                        Label("Catalog", systemImage: "car")
+                    }
+                FavoriteView(viewModel: viewModel)
+                    .tabItem {
+                        Label("Favorites", systemImage: "star")
+                    }
+            }
         }
     }
 }

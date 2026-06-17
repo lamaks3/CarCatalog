@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct CarDetailView: View {
-    @ObservedObject var carStore: CarStore
-    var car: ToyotaCar
+    @ObservedObject var viewModel: CatalogViewModel
+    var car: Car
 
     var body: some View {
         VStack {
             HStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.blue.opacity(0.1))
+                        .fill(Color.blue.opacity(0.3))
                         .frame(maxWidth: .infinity)
                         .aspectRatio(1, contentMode: .fit)
 
@@ -30,9 +30,9 @@ struct CarDetailView: View {
 
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Toyota \(car.model)")
+                    Text("\(car.brand) \(car.model)")
                         .font(.headline)
-                    Text(car.category.rawValue)
+                    Text(car.category.title)
                 }
                 Spacer()
                 Text(car.isAvailable ? "In stock" : "Out of stock")
@@ -51,7 +51,7 @@ struct CarDetailView: View {
                     .bold()
             }
             HStack {
-                FavoriteButton(carStore: carStore, car: car)
+                FavoriteButton(viewModel: viewModel, car: car)
                 Spacer()
             }
             Spacer()
@@ -61,30 +61,36 @@ struct CarDetailView: View {
 }
 
 struct FavoriteButton: View {
-    @ObservedObject var carStore: CarStore
-    let car: ToyotaCar
+    @ObservedObject var viewModel: CatalogViewModel
+    let car: Car
     var isSelected: Bool {
-        carStore.favorites.contains(where: { $0.id == car.id })
+            if let actualCar = viewModel.cars.first(where: { $0.id == car.id }) {
+                return actualCar.isFavorite
+            }
+            return false
     }
 
     var body: some View {
         Button(action: {
-            carStore.toggleFavorite(car)
+            viewModel.toggleFavorite(car)
         }) {
             Image(systemName: isSelected ? "star.fill" : "star")
                 .font(.title)
-                .foregroundColor(isSelected ? .black : .gray)
+                .foregroundColor(Color.primary)
+                .opacity(isSelected ? 1 : 0.5)
         }
     }
 }
 
 #Preview {
-    let car = ToyotaCar(
-        model: "RAV 4",
+    let car = Car(
+        brand: "Audi",
+        model: "A5",
         year: 2005,
         price: 12000,
-        category: ToyotaCar.Category.suv,
-        isAvailable: false
+        category: Car.Category.sedan,
+        isAvailable: false,
+        isFavorite: false
     )
-    CarDetailView(carStore: CarStore(), car: car)
+    CarDetailView(viewModel: CatalogViewModel(), car: car)
 }

@@ -7,23 +7,24 @@
 
 import Foundation
 
-struct ToyotaCar: Identifiable {
-    let id = UUID()
+struct Car: Identifiable, Equatable, Hashable {
+    var id = UUID()
+    let brand: String
     let model: String
     let year: Int
     let price: Int
     let category: Category
     let isAvailable: Bool
+    var isFavorite: Bool
 
     enum Category: String, CaseIterable {
         case sedan = "Sedan"
         case suv = "SUV"
         case sport = "Sport"
-        case all = "All"
-    }
-}
+        case hatchback = "Hatchback"
 
-enum PriceFilter: String, CaseIterable {
-    case ascending = "Ascending"
-    case descending = "Descending"
+        var title: String {
+            return self.rawValue
+        }
+    }
 }
