@@ -10,7 +10,7 @@ import SwiftUI
 struct FavoriteView: View {
     @ObservedObject var carStore: CarStore
     var body: some View {
-        let favorites = carStore.favorites
+        let favorites = carStore.favoriteCars
         VStack(spacing: 0) {
             FavoritesHeader()
             List {

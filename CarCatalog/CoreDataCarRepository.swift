@@ -8,7 +8,6 @@
 import Foundation
 import CoreData
 
-// MARK: - Protocol
 protocol CarRepositoryProtocol {
     func fetchAllCars() -> [Car]
     func save(car: Car)
@@ -31,7 +30,7 @@ class CoreDataCarRepository: CarRepositoryProtocol {
             let entities = try context.fetch(request)
             return entities.compactMap { Car(entity: $0) }
         } catch {
-            print("Ошибка загрузки: \(error)")
+            print("Donwload error: \(error)")
             return []
         }
     }
@@ -76,5 +75,6 @@ extension CarEntity {
 
         self.category = car.category.rawValue
         self.isAvailable = car.isAvailable
+        self.isFavorite = car.isFavorite
     }
 }

@@ -12,7 +12,6 @@ import Combine
 class CarStore: ObservableObject {
     @Published var cars: [Car] = []
 
-    @Published var favorites: [Car] = []
     @Published var priceFilter: PriceFilter? = nil
     @Published var selectedCategory: Car.Category? = nil
 
@@ -51,19 +50,23 @@ class CarStore: ObservableObject {
         return Dictionary(grouping: result, by: { $0.category.title })
     }
 
+    var favoriteCars: [Car] {
+        cars.filter { $0.isFavorite }
+    }
+
     func toggleFavorite(_ car: Car) {
-        if let index = favorites.firstIndex(where: { $0.id == car.id} ) {
-            favorites.remove(at: index)
-        } else {
-            favorites.append(car)
+        if let index = cars.firstIndex(where: { $0.id == car.id }) {
+            var updatedCar = cars[index]
+            updatedCar.isFavorite.toggle()
+            cars[index] = updatedCar
+
+            repository.update(car: updatedCar)
         }
     }
 
     public func delete(car: Car) {
         repository.delete(car: car)
         fetchCars()
-
-        favorites.removeAll { $0.id == car.id }
     }
 
     public func add(car: Car) {

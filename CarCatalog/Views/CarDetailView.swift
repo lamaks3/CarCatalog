@@ -64,7 +64,10 @@ struct FavoriteButton: View {
     @ObservedObject var carStore: CarStore
     let car: Car
     var isSelected: Bool {
-        carStore.favorites.contains(where: { $0.id == car.id })
+            if let actualCar = carStore.cars.first(where: { $0.id == car.id }) {
+                return actualCar.isFavorite
+            }
+            return false
     }
 
     var body: some View {
@@ -85,7 +88,8 @@ struct FavoriteButton: View {
         year: 2005,
         price: 12000,
         category: Car.Category.sedan,
-        isAvailable: false
+        isAvailable: false,
+        isFavorite: false
     )
     CarDetailView(carStore: CarStore(), car: car)
 }

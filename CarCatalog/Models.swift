@@ -15,6 +15,7 @@ struct Car: Identifiable, Equatable, Hashable {
     let price: Int
     let category: Category
     let isAvailable: Bool
+    var isFavorite: Bool
 
     enum Category: String, CaseIterable {
         case sedan = "Sedan"
@@ -45,6 +46,7 @@ extension Car {
         self.price = Int(entity.price)
         self.category = category
         self.isAvailable = entity.isAvailable
+        self.isFavorite = entity.isFavorite
     }
 }
 

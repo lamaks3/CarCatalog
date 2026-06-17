@@ -66,7 +66,7 @@ struct AddCarView: View {
                 Button(action:
                         {
                     if isFormValid {
-                        let car = Car(brand: brand, model: model, year: year!, price: price!, category: category, isAvailable: isAvailable)
+                        let car = Car(brand: brand, model: model, year: year!, price: price!, category: category, isAvailable: isAvailable, isFavorite: true)
                         store.add(car: car)
                         dismiss()
                     } else {
