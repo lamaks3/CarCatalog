@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BF060FE72FD9AD5A006BD97D /* CarDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BF060FE52FD9AD5A006BD97D /* CarDataModel.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		BF3D7DC62FB1C2D600C16C9A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BF060FE62FD9AD5A006BD97D /* CarDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CarDataModel.xcdatamodel; sourceTree = "<group>"; };
 		BF3D7DB82FB1C2D500C16C9A /* CarCatalog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarCatalog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF3D7DC52FB1C2D600C16C9A /* CarCatalogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarCatalogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF3D7DCF2FB1C2D600C16C9A /* CarCatalogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarCatalogUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +80,7 @@
 		BF3D7DAF2FB1C2D500C16C9A = {
 			isa = PBXGroup;
 			children = (
+				BF060FE52FD9AD5A006BD97D /* CarDataModel.xcdatamodeld */,
 				BF3D7DBA2FB1C2D500C16C9A /* CarCatalog */,
 				BF3D7DC82FB1C2D600C16C9A /* CarCatalogTests */,
 				BF3D7DD22FB1C2D600C16C9A /* CarCatalogUITests */,
@@ -236,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF060FE72FD9AD5A006BD97D /* CarDataModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -578,6 +585,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		BF060FE52FD9AD5A006BD97D /* CarDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				BF060FE62FD9AD5A006BD97D /* CarDataModel.xcdatamodel */,
+			);
+			currentVersion = BF060FE62FD9AD5A006BD97D /* CarDataModel.xcdatamodel */;
+			path = CarDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = BF3D7DB02FB1C2D500C16C9A /* Project object */;
 }

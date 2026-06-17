@@ -30,7 +30,7 @@ struct CarInfo: View {
                 VStack(alignment: .leading) {
                     Text("\(car.brand) \(car.model)")
                         .font(.headline)
-                    Text(car.category.rawValue)
+                    Text(car.category.title)
                 }
                 Spacer()
                 Text(car.isAvailable ? "In stock" : "Out of stock")
@@ -63,14 +63,14 @@ struct CarList: View {
                     }
 
                     if let category = carStore.selectedCategory {
-                        Text("\(category.rawValue)s only")
+                        Text("\(category.title)s only")
                     } else {
                         Text("All cars")
                     }
                 }
             }
 
-            let categories = carStore.sortedCars.keys.sorted { $0.rawValue < $1.rawValue }
+            let categories = carStore.sortedCars.keys
 
             if categories.isEmpty {
                 Section {
@@ -79,8 +79,8 @@ struct CarList: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             } else {
-                ForEach(categories, id: \.self) { category in
-                    Section(header: Text(category.rawValue.capitalized)) {
+                ForEach(categories.sorted(), id: \.self) { category in
+                    Section(header: Text(category)) {
                         let carsInCategory = carStore.sortedCars[category] ?? []
 
                         ForEach(carsInCategory) { car in
@@ -91,7 +91,10 @@ struct CarList: View {
                                }
                         }
                         .onDelete { indexSet in
-                            carStore.delete(at: indexSet, in: category)
+                            for index in indexSet {
+                                let carToDelete = carsInCategory[index]
+                                carStore.delete(car: carToDelete)
+                            }
                         }
                     }
                 }
@@ -149,20 +152,16 @@ struct FilterByPriceButton: View {
 }
 
 struct FilterByCategoryButton: View {
-    let carStore: CarStore
+    @ObservedObject var carStore: CarStore
 
     var body: some View {
         Menu {
-            Button("Sedan's only") {
-                carStore.selectedCategory = .sedan
+            ForEach(Car.Category.allCases, id: \.self) { category in
+                Button("\(category.title)'s only") {
+                    carStore.selectedCategory = category
+                }
             }
-            Button("Sport's only") {
-                carStore.selectedCategory = .sport
-            }
-            Button("SUV's only") {
-                carStore.selectedCategory = .suv
-            }
-            Button("All categories") {
+            Button("All cars") {
                 carStore.selectedCategory = nil
             }
         } label: {
