@@ -76,7 +76,8 @@ struct FavoriteButton: View {
         }) {
             Image(systemName: isSelected ? "star.fill" : "star")
                 .font(.title)
-                .foregroundColor(isSelected ? .black : .gray)
+                .foregroundColor(Color.primary)
+                .opacity(isSelected ? 1 : 0.5)
         }
     }
 }
